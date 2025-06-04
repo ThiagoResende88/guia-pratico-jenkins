@@ -21,7 +21,9 @@ pipeline {
         } 
         stage('Deploy no Kubernetes') {
             steps {
-               sh 'echo "Executando o comando kubectl apply"'     
+                sh 'echo "Aplicando manifestos Kubernetes ao cluster Minikube..."'
+                sh 'kubectl apply -f k8s/deployment.yaml' // Este comando aplica o seu arquivo
+                sh 'echo "Deploy no Kubernetes (tentativa de apply) concluído!"'
             }
         } 
     }
