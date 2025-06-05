@@ -20,11 +20,16 @@ pipeline {
             }
         } 
         stage('Deploy no Kubernetes') {
-            steps {
-                sh 'echo "Aplicando manifestos Kubernetes ao cluster Minikube..."'
-                sh 'kubectl apply -f k8s/deployment.yaml' // Este comando aplica o seu arquivo
-                sh 'echo "Deploy no Kubernetes (tentativa de apply) concluído!"'
-            }
-        } 
-    }
+             steps {
+                // 'minikube-kubeconfig' é o ID da credencial que você criou no Jenkins
+                // KUBECONFIG_FILE será uma variável de ambiente contendo o caminho para o arquivo kubeconfig
+                withCredentials([file(credentialsId: 'minikube-kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                   sh 'echo "Aplicando manifestos Kubernetes ao cluster Minikube..."'
+                   // Diz ao kubectl para usar este arquivo de configuração específico
+                   sh "KUBECONFIG=${KUBECONFIG_FILE} kubectl apply -f k8s/deployment.yaml"
+                   sh 'echo "Deploy no Kubernetes (tentativa de apply) concluído!"'
+                   }
+             }
+        }
+     }
 }
